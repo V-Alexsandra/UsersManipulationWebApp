@@ -15,5 +15,6 @@ namespace UsersManipulation.Business.Services.Contracts
         void DeleteUser(int userId);
         bool CanUserLogin(int userId);
         IEnumerable<UserEntity> GetAllUsers();
+        string GetUserName(int userId);
     }
 }

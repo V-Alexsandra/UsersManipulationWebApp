@@ -36,7 +36,7 @@ public class UserService : IUserService
             var user = new UserEntity
             {
                 Email = model.Email,
-                Name = model.Email,
+                Name = model.Name,
                 RegistrationDate = DateTime.UtcNow,
                 LastLoginDate = DateTime.UtcNow,
                 IsBlocked = false
@@ -59,7 +59,7 @@ public class UserService : IUserService
         }
         else
         {
-            throw new NotSucceededException("Register failed");
+            throw new NotSucceededException("The password does not match. Please try again.");
         }
     }
 
@@ -76,6 +76,11 @@ public class UserService : IUserService
     {
         var user = await _userRepository.FindByEmailAsync(model.Email);
 
+        if (user == null)
+        {
+            throw new NotFoundException("No such account exists. Please check the entered data.");
+        }
+
         user.LastLoginDate = DateTime.UtcNow;
 
         await _userRepository.UpdateAsync(user);
@@ -84,7 +89,7 @@ public class UserService : IUserService
 
         if(!canLogin)
         {
-            throw new NotSucceededException("UserBlocked");
+            throw new NotSucceededException("Your account is temporarily blocked. If you believe this was an error, please contact your administrator.");
         }
 
         if (model == null)
@@ -92,16 +97,11 @@ public class UserService : IUserService
             throw new ArgumentNullException(nameof(model), "LoginUserDto Model is null");
         }
 
-        if (user == null)
-        {
-            throw new NotFoundException(nameof(user));
-        }
-
         var result = CheckPassword(user, model.Password);
 
         if (!result)
         {
-            throw new NotSucceededException("Invalid password");
+            throw new LoginException("Invalid password. Try again.");
         }
 
         return new LoginSuccessDto
@@ -129,6 +129,7 @@ public class UserService : IUserService
             user.IsBlocked = true;
             _userRepository.UpdateAsync(user).Wait();
         }
+        else throw new NotFoundException(nameof(userId));
     }
 
     public void UnblockUser(int userId)
@@ -139,6 +140,7 @@ public class UserService : IUserService
             user.IsBlocked = false;
             _userRepository.UpdateAsync(user).Wait();
         }
+        else throw new NotFoundException(nameof(userId));
     }
 
     public void DeleteUser(int userId)
@@ -148,6 +150,7 @@ public class UserService : IUserService
         {
             _userRepository.DeleteAsync(user).Wait();
         }
+        else throw new NotFoundException(nameof(userId));
     }
 
     public bool CanUserLogin(int userId)
@@ -161,4 +164,17 @@ public class UserService : IUserService
         return _userRepository.GetAllAsync().Result;
     }
 
+    public string GetUserName(int userId)
+    {
+        var user = _userRepository.GetByIdAsync(userId).Result;
+
+        if (user != null)
+        {
+            return user.Name;
+        }
+        else
+        {
+            throw new NotFoundException(nameof(userId));
+        }
+    }
 }

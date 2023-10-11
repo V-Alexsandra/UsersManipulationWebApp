@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using UsersManipulation.Business.DTOs;
 using UsersManipulation.Business.DTOs.UserDtos;
+using UsersManipulation.Business.Exceptions;
 using UsersManipulation.Business.Services.Contracts;
 
 namespace UsersManipulation.WebAPI.Controllers
@@ -22,56 +24,142 @@ namespace UsersManipulation.WebAPI.Controllers
         [Route("register")]
         public async Task<IActionResult> RegisterUserAsync([FromBody] RegisterUserDto model)
         {
-            var register = await _userService.RegisterUserAsync(model);
-
-            return Ok(register);
+            try
+            {
+                var register = await _userService.RegisterUserAsync(model);
+                return Ok(register);
+            }
+            catch (NotSucceededException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
         }
 
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> LoginUserAsync([FromBody] LoginUserDto model)
         {
-            var login = await _userService.LoginUserAsync(model);
-            return Ok(login);
+            try
+            {
+                var login = await _userService.LoginUserAsync(model);
+                return Ok(login);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (NotSucceededException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (ArgumentNullException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (LoginException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
         }
 
         [HttpPost("block/{userId}")]
-        //[Authorize]
+        [Authorize]
         public IActionResult BlockUser(int userId)
         {
-            _userService.BlockUser(userId);
-            return Ok("User blocked successfully.");
+            try
+            {
+                _userService.BlockUser(userId);
+                return Ok("User blocked successfully.");
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
         }
 
         [HttpPost("unblock/{userId}")]
-        //[Authorize]
+        [Authorize]
         public IActionResult UnblockUser(int userId)
         {
-            _userService.UnblockUser(userId);
-            return Ok("User unblocked successfully.");
+            try
+            {
+                _userService.UnblockUser(userId);
+                return Ok("User unblocked successfully.");
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
         }
 
         [HttpPost("delete/{userId}")]
-        //[Authorize]
+        [Authorize]
         public IActionResult DeleteUser(int userId)
         {
-            _userService.DeleteUser(userId);
-            return Ok("User deleted successfully.");
-        }
-
-        [HttpGet("canLogin/{userId}")]
-        public IActionResult CanUserLogin(int userId)
-        {
-            var canLogin = _userService.CanUserLogin(userId);
-            return Ok(canLogin);
+            try
+            {
+                _userService.DeleteUser(userId);
+                return Ok("User deleted successfully.");
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
         }
 
         [HttpGet("getAll")]
-        //[Authorize]
+        [Authorize]
         public IActionResult GetAllUsers()
         {
-            var users = _userService.GetAllUsers();
-            return Ok(users);
+            try
+            {
+                var users = _userService.GetAllUsers();
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
+        [HttpGet("getName/{userId}")]
+        [Authorize]
+        public IActionResult GetUserName(int userId)
+        {
+            try
+            {
+                var userName = _userService.GetUserName(userId);
+                return Ok(userName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal Server Error");
+            }
         }
     }
 }
+
