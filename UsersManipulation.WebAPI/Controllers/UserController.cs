@@ -74,7 +74,8 @@ namespace UsersManipulation.WebAPI.Controllers
             }
         }
 
-        [HttpPost("block/{userId}")]
+        [HttpPost]
+        [Route("block/{userId}")]
         [Authorize]
         public IActionResult BlockUser(int userId)
         {
@@ -93,7 +94,8 @@ namespace UsersManipulation.WebAPI.Controllers
             }
         }
 
-        [HttpPost("unblock/{userId}")]
+        [HttpPost]
+        [Route("unblock/{userId}")]
         [Authorize]
         public IActionResult UnblockUser(int userId)
         {
@@ -112,7 +114,8 @@ namespace UsersManipulation.WebAPI.Controllers
             }
         }
 
-        [HttpPost("delete/{userId}")]
+        [HttpPost]
+        [Route("delete/{userId}")]
         [Authorize]
         public IActionResult DeleteUser(int userId)
         {
@@ -131,7 +134,8 @@ namespace UsersManipulation.WebAPI.Controllers
             }
         }
 
-        [HttpGet("getAll")]
+        [HttpGet]
+        [Route("getAll")]
         [Authorize]
         public IActionResult GetAllUsers()
         {
@@ -146,7 +150,8 @@ namespace UsersManipulation.WebAPI.Controllers
             }
         }
 
-        [HttpGet("getName/{userId}")]
+        [HttpGet]
+        [Route("getName/{userId}")]
         [Authorize]
         public IActionResult GetUserName(int userId)
         {

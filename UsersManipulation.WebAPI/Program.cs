@@ -6,9 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)
-    .AddEnvironmentVariables()
     .Build();
-
 
 builder.Services.AddCors(options =>
 {
@@ -36,9 +34,10 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseSwagger();
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
     app.UseSwaggerUI();
 }
 

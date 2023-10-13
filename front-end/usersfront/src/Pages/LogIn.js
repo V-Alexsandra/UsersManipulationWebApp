@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Container, Row, Col } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import baseUrl from '../config';
 
 function Login() {
     const [formData, setFormData] = useState({
@@ -19,13 +20,11 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("https://localhost:44309/api/User/login", formData);
+            const response = await axios.post(`${baseUrl}/api/User/login`, formData);
             const { id, token } = response.data;
 
             sessionStorage.setItem("token", token);
             sessionStorage.setItem("id", id);
-
-            console.log("Login success. User ID:", id);
 
             navigate("/users");
         } catch (error) {

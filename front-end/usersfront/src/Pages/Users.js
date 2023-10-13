@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Button, Container, Row, Col, Table, Form } from "react-bootstrap";
 import { format } from 'date-fns';
+import baseUrl from '../config';
 
 function Users() {
     const [userName, setUserName] = useState("");
@@ -54,7 +55,7 @@ function Users() {
 
         for (const userId of selectedUserIds) {
             try {
-                await axios.post(`https://localhost:44309/api/User/block/${userId}`);
+                await axios.post(`${baseUrl}/api/User/block/${userId}`);
                 setCheckboxState({});
             } catch (error) {
                 console.error(`Failed to block user ${userId}:`, error);
@@ -84,7 +85,7 @@ function Users() {
 
         for (const userId of selectedUserIds) {
             try {
-                await axios.post(`https://localhost:44309/api/User/unblock/${userId}`);
+                await axios.post(`${baseUrl}/api/User/unblock/${userId}`);
                 setCheckboxState({});
             } catch (error) {
                 console.error(`Failed to unblock user ${userId}:`, error);
@@ -109,7 +110,7 @@ function Users() {
 
         for (const userId of selectedUserIds) {
             try {
-                await axios.post(`https://localhost:44309/api/User/delete/${userId}`);
+                await axios.post(`${baseUrl}/api/User/delete/${userId}`);
                 setCheckboxState({});
             } catch (error) {
                 console.error(`Failed to delete user ${userId}:`, error);
@@ -138,7 +139,7 @@ function Users() {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
         try {
-            const response = await axios.get("https://localhost:44309/api/User/getAll");
+            const response = await axios.get(`${baseUrl}/api/User/getAll`);
             setUsers(response.data);
         } catch (error) {
             console.error("Failed to fetch users:", error);
@@ -158,7 +159,7 @@ function Users() {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
         try {
-            const response = await axios.get(`https://localhost:44309/api/User/getName/${userId}`);
+            const response = await axios.get(`${baseUrl}/api/User/getName/${userId}`);
             setUserName(response.data);
         } catch (error) {
             console.error("Failed to fetch user name:", error);
@@ -176,7 +177,7 @@ function Users() {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
         try {
-            const response = await axios.get("https://localhost:44309/api/User/getAll");
+            const response = await axios.get(`${baseUrl}/api/User/getAll`);
             setUsers(response.data);
         } catch (error) {
             console.error("Failed to fetch users:", error);
@@ -221,7 +222,8 @@ function Users() {
                     </div>
                 </Col>
             </Row>
-            <br></br>
+            <br>
+            </br>
             <Row>
                 <Col>
                     <Table responsive className="table table-bordered"> 

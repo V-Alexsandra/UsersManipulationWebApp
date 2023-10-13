@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Container, Row, Col } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import baseUrl from '../config';
 
 function Registration() {
     const [formData, setFormData] = useState({
@@ -22,14 +23,18 @@ function Registration() {
         e.preventDefault();
         try {
             const response = await axios.post(
-                "https://localhost:44309/api/User/register",
+                `${baseUrl}/api/User/register`,
                 formData
             );
             alert("Registration success");
-            console.log("Registration success:", response.data);
             navigate("/");
+
         } catch (error) {
-            setError("Registration failed. An error occurred.");
+            if (error.response && error.response.data) {
+                setError(error.response.data);
+            } else {
+                setError("Login failed. An error occurred.");
+            }
         }
     };
 
@@ -94,7 +99,7 @@ function Registration() {
                                 </button>
                             </Col>
                             <Col>
-                                <Link to="/login">
+                                <Link to="/">
                                     <button className="btn btn-primary">Login</button>
                                 </Link>
                             </Col>
